@@ -1,0 +1,30 @@
+pattern format:
+
+[byte:rows]
+
+for each row:
+  [byte:chflags1] [data for channels 0..7] [byte:chflags2] [data for channels 8..15]
+
+                                           '---------------------------------------'
+                                                              |
+                                                              `-> only present if channel count is >= 8
+   
+  data:
+    for each channel that is flagged:
+    [byte:maskvar] [data...]
+    maskvar=EVINevin
+     n = new note
+     i = new instrument
+     v = new vcmd
+     e = new effect+param
+     N = entry contains note
+     I = entry contains instrument
+     V = entry contains vcmd
+     E = entry contians effect+param
+     
+     (corresponding data follows)
+
+  NOTE is same as IT note
+  INSTRUMENT is same as IT instrument MINUS 1
+  VCMD is same as IT vcmd
+  EFFECT/PARAM is same as IT effect/param

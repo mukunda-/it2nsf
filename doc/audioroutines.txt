@@ -1,0 +1,102 @@
+audio update procedures
+
+	pulse:
+
+		if "newnote"
+			volume = 0
+		set periodL
+		if periodH doesnt match OR "new note" then
+			update periodH and shadow
+		set duty
+		set volume
+-----------------------------------------------------------------------------------
+	triangle:
+		if "newnote"
+			disable triangle
+
+		set period
+
+		if volume == 0
+			disable triangle
+		else
+			
+			enable triangle
+-----------------------------------------------------------------------------------
+	noise:
+		if "newnote"
+			volume = 0
+		convert pitch to NOISE INDEX
+		set period (indexed)
+		set volume
+-----------------------------------------------------------------------------------
+	dpcm:
+		if volume == 0
+			disable DPCM in 4015
+			exit
+		else if 'new note':
+			disable DPCM via 4015
+			copy sample settings from instrument
+			map dpcm banks for sample access (E/F)
+			start dpcm via 4015
+		 
+		translate pitch into dpcm period index (or use duty env)
+-----------------------------------------------------------------------------------
+	vrc6 pulse:
+		if newnote
+			disable channel
+		set volume
+		set duty
+		set pitch/enable
+-----------------------------------------------------------------------------------
+	vrc6 sawtooth:
+		if newnote:
+			disable channel
+		set accu
+		set duty
+		set pitch/enable
+-----------------------------------------------------------------------------------
+	vrc7:
+		if custom instrument:
+			setup custom registers
+		
+		calculate/set pitch
+		if newnote:
+			apply CHANNEL TRIGGER too
+		
+		set instrument+volume
+
+-----------------------------------------------------------------------------------
+	n106:
+		if newnote:
+			stop sound
+		set frequency
+		set source
+		if newnote:
+			start sound
+-----------------------------------------------------------------------------------
+	mmc5:
+		same as pulse
+		different register addresses
+-----------------------------------------------------------------------------------
+	fme07:
+		http://www.atarimagazines.com/v4n7/stsound.html
+
+		if newnote:
+			volume = 0
+		set pitch
+		volume = volume
+
+		(init tone enable bits at startup)
+-----------------------------------------------------------------------------------
+	fds:
+		if newnote:
+			volume=0
+		
+		if waveform_index != instrument
+			waveform_index = instrument
+			copy waveform
+		
+		set frequency
+		
+		set volume
+-----------------------------------------------------------------------------------

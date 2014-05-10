@@ -1,0 +1,76 @@
+NES = 21477270 hz
+CLK = NES/12 1789772.5
+
+C5 = 261.625565 Hz
+
+pulse
+	11bit period
+	F = (CLK / ((period+1)*2)) / 8
+	C5 = 426.5605912212745723071825950954
+	lowest note: A-2
+	8 sample cycle
+tri
+	11bit period
+	F = CLK / (period+1)
+	C5 = 213.7490456106372861535912975477
+	lowest note: A-1
+	32 sample cycle
+noise
+	4bit period index
+	F = CLK / ptab[index]
+	notemap:
+	C0,B0,B1,E2,B2,E3,B3,D#4,G4,B4,E5,B5,B6,B7,B8,B9 (15..0)
+	(period table = 
+        4,8,16,32,64,96,128,160,202,254,380,508,762,1016,2034,4068)
+	(use search function to find period/noise index)
+	(noise)
+dpcm
+	4bit period index
+	F = CLK / ptab[index]
+	C5 = 213.7490456106372861535912975477 (index 7)
+	NOTES: C4 D4 E4 F4 G4 A4 B4 C5 D5 F5 G5 A5 C6 E6 G6 C7 (0..15)
+	(use search function to find period index)
+	1bit dpcm
+vrc6 pulse
+	12bit period
+	F = CLK / (period+1)
+	C5 = 426.5605912212745723071825950954
+	lowest note: A-1
+	16 sample cycle
+vrc6 saw
+	12bit period
+	F = CLK / (period+1)
+	C5 = 487.64067568145665406535153725188
+	lowest note: C-2
+	14 sample cycle
+n106
+	18bit frequency
+	F = (f * NES) / (360 * 2^18)
+	C5 = 18393.463199067367500618095316584
+	highest note: A-8
+	16 sample cycle (definable)
+vrc7
+	16bit frequency
+	(must translate into octave/freq setting)
+	F = 49772*f / 2^19
+	C5 = 2752.0849523349825027150959333896
+	highest note: F#9
+	? sample cycle (use 32?)
+mmc5
+	11bit period
+	F = CLK / ((period+1)*2)
+	C5 = 426.5605912212745723071825950954
+	lowest note: A-2
+	16 sample cycle
+fme07
+	12bit period
+	F = CLK / (period+1)
+	C5 = 426.5605912212745723071825950954
+	lowest note: A-1
+	16 sample cycle
+FDS
+	12bit frequency
+	F = CLK * FREQ / 65536
+	C5 = 613.11543996891225002060317721945
+	highest note: G#7
+	64 sample cycle

@@ -1,0 +1,40 @@
+instrument MODULATION behavior:
+
+4 variables: modulation (bit), sweep, pos, depth
+
+update:
+  if note on:
+    sweep = instrument.mod_delay
+    flags &= ~modulation
+  ELSE:
+  if flags&modulation: 
+
+    if( depth < instrument.mod_depth )
+      sweep = sweep - 1
+      if sweep = 0:
+        sweep = instrument.mod_sweep
+        depth = depth + 1
+
+    pos += instrument.mod_speed
+    pos &= 63
+
+    if( pos & 16 )
+      a = vibtable[pos*16 + depth]
+    else
+      a = vibtable[(pos^15)*16 + depth]
+   
+    if( pos < 32 )
+      pitch += a
+    else
+      pitch -= a
+
+    set pitch flag
+
+  else
+    sweep = sweep - 1
+    if sweep = 0 then:
+      flags |= modulation
+      sweep = instrument.mod_sweep
+
+
+  

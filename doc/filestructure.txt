@@ -1,0 +1,21 @@
+
+
+elements:
+-------------------------------------------------------------------
+XC: must not cross 4k banks
+2X: may span across 2 4k bank
+AX: may span across multiple 4k banks
+-------------------------------------------------------------------
+XC module address table (upto 256 bytes)
+XC module (upto 1952 bytes)
+XC instrument( ~30..500 bytes )
+2X dpcm sample( ? bytes ), must be 64-byte aligned
+AX pattern (? bytes)
+-------------------------------------------------------------------
+file structure:
+  [nsf header]
+  program code ~4.5k
+  module address table
+  dpcm samples <padded for 64 byte alignment>
+  modules and instruments (whichever fits in the banks first)
+  pattern data

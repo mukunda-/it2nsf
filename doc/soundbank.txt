@@ -1,0 +1,152 @@
+  SOUND BANK FORMAT
+  *****************
+
+6:22 AM 12/13/2009
+
+ADDRESS TABLE (must not cross banks)
+----------------------------------------------------------------
+ BYTE		number of modules in bank (MAX 85)
+ BYTE*N*3	pointers to MODULES (Laddr,Haddr,Bank) (Cxxx region)
+
+MODULE (must not cross banks)
+----------------------------------------------------------------
+ 000h	byte		initial tempo "sbm_itempo"
+ 001h	byte		initial speed "sbm_ispeed"
+ 002h	byte		initial volume "sbm_ivolume"
+ 003h	byte		number of patterns in module "sbm_pattcount"
+ 004h	byte		number of instruments in module "sbm_inscount"
+ 005h	byte		length of order list "sbm_length"
+ 006h	byte		number of channels in module
+ 007h	byte		expansion chips used (copy of NSF entry)
+ [reserved data]
+ 010h	byte*64		N106 wavetable (used with N106 expansion only)
+ 050h	byte*16		channel map
+ 060h	byte*len	sequence "sbm_tables"
+ +len	byte*npatt	pattern addresses LBYTE
+ +npatt	byte*npatt	pattern addresses HBYTE (must point to Cxxx region)
+ +npatt	byte*npatt	pattern addresses BANK
+ +npatt byte*ninst	instrument addresses LBYTE
+ +npatt byte*ninst	instrument addresses HBYTE (must point to Dxxx region)
+ +npatt byte*ninst	instrument addresses BANK
+ 
+INSTRUMENT (must not cross banks)
+----------------------------------------------------------------
+byte:TYPE "sbi_type"
+  0: 2A03 PULSE		1: 2A03 TRIANGLE
+  2: 2A03 NOISE		3: 2A03 DPCM
+  4: VRC6 SQUARE	5: VRC6 SAWTOOTH
+  6: N106 SOUND		7: VRC7 STOCK
+  8: VRC7 CUSTOM	9: MMC5 PULSE
+  A: FME-07 PULSE	B: FDS SOUND
+
+  TYPE must match CHANNEL TYPE
+
+byte:DEFAULT VOLUME "sbi_dvolume"
+	0-64
+
+byte:PITCH BASE L "sbi_pbase"
+byte:PITCH BASE H "sbi_pbase2"
+  pitch base should be adjusted to match the actual hardware pitch
+
+byte:MODULATION DELAY "sbi_mdelay"
+	1..256 (60hz ticks)
+
+byte:MODULATION SWEEP PERIOD "sbi_msweep"
+	1..256 (60hz ticks)
+
+byte:MODULATION DEPTH "sbi_mdepth" *
+	0..15 (0=off, 15 = +-~1 semitones)
+
+byte:MODULATION RATE "sbi_mspeed"
+	0..63
+
+byte: envelope mask "sbi_envelopemask"
+  &1 = has volume envelope
+  &2 = has pitch envelope
+  &4 = has duty/special envelope
+
+byte*16: type specific data (see below)
+
+[**DPCM**]
+ byte:dpcm source bank "sbi_dpcmbank"
+ byte:dpcm offset "sbi_dpcmoffset"
+ byte:dpcm length "sbi_dpcmlength"
+ byte:dpcm loop flag "sbi_dpcmloop"
+
+[**VRC7 CUSTOM**]
+ byte*8: instrument configuration "sbi_vrc7custom"
+
+[**NOISE**]
+ byte:looped noise "sbi_noiseloop" 128=looped, 0=normal
+
+(see table below for which instruments have which envelopes)
+[VOLUME ENVELOPE]
+[PITCH ENVELOPE] (PITCH BEND ......)
+[DUTY/SPECIAL ENVELOPE]
+
+[FDS SAMPLE] *
+
+envelope format
+---------------
+byte:size (offset to next envelope)
+envelope data (sequence of BYTES)
+  0..253	envelope data
+  254		SUSTAIN (sustain loop point follows)
+  255		LOOP (loop point follows)
+
+ loop points are a byte offset from the beginning
+ of the envelope data *PLUS 1*
+
+instrument envelopes/ranges:
+------------------------------------------------------
+2A03 PULSE	vpD	0..16	-128..+125 *	0..3
+2A03 TRIANGLE	vp-	0..16?	-128..+125	-
+2A03 NOISE	v-d	0..16 	-		0..15 &16 *
+2A03 DPCM	--d	-	-		0..15 &0x40
+VRC6 SQUARE	vpD	0..16	-128..+125	0..7
+VRC6 SAWTOOTH	vp-	0..16	-128..+125	-
+N106 STOCK	vpD	0..16	-128..+125	0..63
+VRC7 STOCK	vpD	0..16	-128..+125	1..15 *16
+VRC7 CUSTOM	vpD	0..16	-128..+125	0
+MMC5 PULSE	vpD	0..16	-128..+125	0..3
+FME-07 PULSE	vp-	0..16	-128..+125	-
+FDS SOUND	vp-	0..16	-128..+125	-
+------------------------------------------------------
+ v = optional volume envelope
+ p = optional panning envelope
+ d = optional duty/special envelope
+ D = required duty/special envelope
+ - = envelope type not supported
+
+ * MODULATION is ingored for noise and dpcm.
+
+ * FDS SAMPLE is 64 bytes of sample data for the FDS expansion sound.
+
+ * pitch bend range is +- ~8 semitones.
+   (E/4 semitones) (x*16 is added to the pitch)
+
+ * DUTY/SPECIAL controls duty for pulse, "PERIOD INDEX" and LOOP for 
+    noise and dpcm (&16=LOOP), and WAVEFORM INDEX for N106. 
+    enveloped "PERIOD INDEX" cancels pitch input for noise and dpcm
+    ...and instrument for vrc7
+
+important formatting notes:
+  2a03 pulse:
+    value 0..3 is stored as "(V<<6) OR 00110000b"
+    (used to set length counter halt and envelope disable)
+  vrc6 pulse:
+    value 0..7 is stored as "(V<<4)"
+  vrc7:
+    value 1..15 is stored as "(V<<4)"
+
+  VOLUME ENVELOPE:
+    stored as '128' (if max) or with 'reversed' and 'inversed' 4bit value (if < max)
+    examples input:00001101, output:00000100
+             input:00010000, output:10000000
+             input:00000001, output:00000111
+
+PATTERN (may flow into next bank)
+----------------------------------------------------------------
+byte	number of rows (1..256) (0=256)
+byte*?	pattern data (IT compression, with slight modification)
+

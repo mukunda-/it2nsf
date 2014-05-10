@@ -1,0 +1,15 @@
+n106 'duty'
+
+0-7:  square -- (1+d) * 6.25% duty
+8-15: sawtooth (varying softness)
+16: triangle
+17-20: custom waveform
+
+----------------------------------------
+5:41 AM 8/27/2009
+
+default n106 wavetable:
+----------------------------------
+0-7: square -- (1+d) * 6.25% duty
+24: triangle
+32-39: sawtooth (varying softness)

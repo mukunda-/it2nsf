@@ -1,0 +1,64 @@
+  SOUND BANK FORMAT
+  *****************
+
+ADDRESS TABLE
+----------------------------------------------------------------
+ BYTE		number of modules in bank (MAX 255)
+ BYTE		number of instruments in bank (MAX 255)
+ BYTE*N*3	pointers to MODULES (L table, H table, B table)
+ BYTE*N*3	pointers to INSTRUMENTS (L table, H table, B table)
+
+MODULE
+----------------------------------------------------------------
+ 000h	byte		initial tempo
+ 001h	byte		initial speed
+ 002h	byte		initial volume
+ 003h	byte		number of patterns in module
+ 004h	byte		number of instruments in module
+ 005h	byte		length of order list
+ [reserved data]
+ 010h	byte*ninst	instrument table
+ +ninst	byte*len	sequence
+ +len	byte*npatt	pattern addresses LBYTE
+ +npatt	byte*npatt	pattern addresses HBYTE
+ +npatt	byte*npatt	pattern addresses BANK
+ 
+INSTRUMENT
+----------------------------------------------------------------
+byte:TYPE
+  0: 2A03 SQUARE	1: 2A03 TRIANGLE
+  2: 2A03 NOISE		3: 2A03 DPCM
+  4: VRC6 SQUARE	5: VRC6 SAWTOOTH
+  6: N106 STOCK		7: N106 CUSTOM
+
+byte:DEFAULT VOLUME
+  0-64
+
+byte:PITCH BASE L
+byte:PITCH BASE H
+
+[used for dpcm only, ignored for other]
+ byte:dpcm source bank
+ byte:dpcm offset
+ byte:dpcm length
+ byte:dpcm loop point
+
+[VOLUME ENVELOPE]
+[PITCH ENVELOPE]
+[DUTY ENVELOPE] (if applicable)
+
+envelope format
+---------------
+byte:size (offset to next envelope)
+byte:loop start
+byte:end
+envelope data (sequence of BYTES)
+  -128..120	envelope data
+  121		envelope DELAY (delay byte follows)
+  122..127	reserved
+
+PATTERN
+----------------------------------------------------------------
+byte	number of rows
+byte*?	pattern data (IT compression, with that slight modification)
+
