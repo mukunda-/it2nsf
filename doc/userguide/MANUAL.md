@@ -282,23 +282,23 @@ The duty envelope is used for more than just controlling the wave duty cycle
 of square waves. Here is it's behavior for each instrument type:
 
 ```
-	PULSE,MMC	Selects the duty cycle (0..3) (12.5%, 25%, 50%, 75%)
-	NOISE,DPCM	Selects period index (0..15)
-			noise 0=highest, dpcm 0=lowest
-			(see tables below for notes)
-			Also: add 16 to noise duty for SHORT noise (16..31)
-	VRC6PULSE	Selects the duty cycle (0..7) ((1+x)*6.25%)
-	N106		Selects the wavetable index (0..63). The wavetable can
-                        be overwritten, but here are the indexes for the 
-			default table:
-			0..7: square wave ((1+d) * 6.25% duty)
-			24: triangle wave
-			32..39: sawtooth wave (with varying softness)
-	VRC7		Selects the instrument index. Typically you just use
-			one value, but the instrument index can be enveloped
-                        too...
-	TRI,VRC6SAW,	The duty envelope is not and must not be used.
-	VRC7C,FME7,FDS
+PULSE,MMC	Selects the duty cycle (0..3) (12.5%, 25%, 50%, 75%)
+NOISE,DPCM	Selects period index (0..15)
+		noise 0=highest, dpcm 0=lowest
+		(see tables below for notes)
+		Also: add 16 to noise duty for SHORT noise (16..31)
+VRC6PULSE	Selects the duty cycle (0..7) ((1+x)*6.25%)
+N106		Selects the wavetable index (0..63). The wavetable can
+                be overwritten, but here are the indexes for the 
+		default table:
+		0..7: square wave ((1+d) * 6.25% duty)
+		24: triangle wave
+		32..39: sawtooth wave (with varying softness)
+VRC7		Selects the instrument index. Typically you just use
+		one value, but the instrument index can be enveloped
+                too...
+TRI,VRC6SAW,	The duty envelope is not and must not be used.
+VRC7C,FME7,FDS
 ```
 
 ## Instrument Modulation
@@ -422,3 +422,12 @@ shortnoise
 
 For NOISE instruments that don't use duty envelopes, this sets loop flag which
 makes it sound like ass.
+
+## Credits
+
+IT2NSF is brought to you by:
+
+* mukunda (6502 driver, conversion program)
+* coda (VRC7 help, sharing his genius)
+* madbrain (additional (VRC7) help)
+* reduz (s3m2nsf dude)
