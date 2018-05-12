@@ -1,7 +1,7 @@
 # IT2NSF MANUAL
 
 IT2NSF is a conversion program that accepts special IT (Impulse Tracker
-module) files which contain instrument data specified with a form of MML and 
+module) files which contain instrument data specified with a form of MML and
 then produces NSF (NES sound format) music files with it.
 
 ## Composing a song
@@ -12,7 +12,7 @@ beginning example of the MML chapters explains the 'map' and compatible
 instrument types. If you just want to compose a song with a pack that you have
 acquired you only need to know about this 'channel mapping'.
 
-The samples and instruments (which are generated) in the module are NOT used 
+The samples and instruments (which are generated) in the module are NOT used
 during conversion, so they should not be changed (only the MML data can be
 changed). The generated samples and instruments are used for composition
 purposes only.
@@ -53,12 +53,12 @@ Only volume commands that affect the volume are supported.
 * Variable pattern length
 * Linear Pitch (must be used, amiga mode is not supported)
 * +++ orders (+++ is like ropes in the pool, that tell you to stay out of the deep end because you're a little kid and can't swim for shit)
-  
+
 ### Things that you should NOT do
 
 * Use instruments that don't exist.
 * Bxx to an invalid position.
-  
+
 ### About tempo
 
 Tempo 150 is the best, because then 1 tick equals 1 NES frame. Tempos less
@@ -67,8 +67,8 @@ double-updates (two updates in one frame to keep up with the song, eating
 up cpu and skipping ticks).
 
 ### Another slight warning
- 
-The final pitch is not clipped, sliding too far may result in an undefined 
+
+The final pitch is not clipped, sliding too far may result in an undefined
 pitch setting.
 
 ## NOISE and DPCM notes
@@ -106,7 +106,7 @@ corresponding envelope value for when you are making an envelope.)
 | B-4  | 6     | 7919.3 Hz | G-6  | 14    | 24.858 kHz |
 | C-5  | 7     | 8363.4 Hz | C-7  | 15    | 33.144 kHz |
 
-You can slide the pitch with Exx/Fxx too but it will still be limited to the 
+You can slide the pitch with Exx/Fxx too but it will still be limited to the
 16 frequencies.
 
 ## Writing the MML
@@ -144,7 +144,7 @@ The MML parser ignores all text until it finds the "[[IT2NSF]]" marker. After
 this marker the MML commands follow. All of the MML commands are in this
 format:
 
-```
+```mml
 [command] <arg1> <arg2> <arg3> ...
 ```
 
@@ -177,7 +177,7 @@ Up to 16 channels may be defined; any more will be ignored/crash something.
 The selected expansion chips will automatically be added to the NSF.
 
 The next command we see defines a new instrument. The "instr" command takes
-a single argument which is the name of the instrument (may contain spaces). 
+a single argument which is the name of the instrument (may contain spaces).
 The name will be given to the generated instrument. The first instrument
 command+subcommands will define the behavior of the first instrument in the
 module. The following instr commands will define the behavior for the
@@ -205,10 +205,10 @@ NOISE in NSE). Here's a list of the instrument types (and compatible channels)
 | FDS       | FDS sound instrument (FDS)   |
 
 The "duty" and "vol" commands define ENVELOPES for an instrument. Envelopes
-are processed once every frame. 
+are processed once every frame.
 
-The duty envelope for the "my square wave" instrument will cause the duty of 
-the square wave to be 12.5% (1) for the first two frames, 25% for the third 
+The duty envelope for the "my square wave" instrument will cause the duty of
+the square wave to be 12.5% (1) for the first two frames, 25% for the third
 frame, and then 50% for frames past the third.
 
 The volume envelope changes the volume scale of the sound per-frame. Each
@@ -217,10 +217,10 @@ entry ranges from 0..16, where 0 is silent and 16 is the original volume.
 The second instrument defined is for the 2A03 triangle channel. Just a basic
 triangle sound.
 
-The third instrument defined is for the 2A03 dpcm channel. The 'sample' 
-command selects a sample in the module that will be converted to 1-bit DPCM 
-for the instrument, so in this case the first sample in the module will be 
-converted to DPCM and then played when this instrument appears in the DMC 
+The third instrument defined is for the 2A03 dpcm channel. The 'sample'
+command selects a sample in the module that will be converted to 1-bit DPCM
+for the instrument, so in this case the first sample in the module will be
+converted to DPCM and then played when this instrument appears in the DMC
 mapped channel.
 
 The fourth/last instrument defined is for the 2A03 noise channel. For the
@@ -248,11 +248,11 @@ semitones (you can put numbers with decimal places.) The resolution of the
 decimal places is limited to .25, .50 and .75.
 
 The envelopes have a loop point which is the position from where the envelope
-resumes after having reached the end. By default the last entry is looped 
+resumes after having reached the end. By default the last entry is looped
 (appears as just holding the last entry). The loop point can be set with a '|'
 in the envelope data:
 
-```
+```mml
 vol 2 3 4 5 5 | 6 6 5 5
 ```
 
@@ -261,7 +261,7 @@ repeated.
 
 And an example for a 'major' arpeggio with the note switching every 2 frames:
 
-```
+```mml
 pitch | 0 0 4 4 7 7
 ```
 
@@ -273,7 +273,7 @@ must remain on the same tick for all envelopes (for proper sample generation!)
 
 (example which follows the sustain start/end warning)
 
-```
+```mml
 vol 16 15 14 { 13 13 13 } 12 11 10 9 8 7 6 5 4 3 2 1 0
 duty 0 0 1 { 2 2 1 } 2
 ```
@@ -281,40 +281,28 @@ duty 0 0 1 { 2 2 1 } 2
 The duty envelope is used for more than just controlling the wave duty cycle
 of square waves. Here is it's behavior for each instrument type:
 
-```
-PULSE,MMC	Selects the duty cycle (0..3) (12.5%, 25%, 50%, 75%)
-NOISE,DPCM	Selects period index (0..15)
-		noise 0=highest, dpcm 0=lowest
-		(see tables below for notes)
-		Also: add 16 to noise duty for SHORT noise (16..31)
-VRC6PULSE	Selects the duty cycle (0..7) ((1+x)*6.25%)
-N106		Selects the wavetable index (0..63). The wavetable can
-                be overwritten, but here are the indexes for the 
-		default table:
-		0..7: square wave ((1+d) * 6.25% duty)
-		24: triangle wave
-		32..39: sawtooth wave (with varying softness)
-VRC7		Selects the instrument index. Typically you just use
-		one value, but the instrument index can be enveloped
-                too...
-TRI,VRC6SAW,	The duty envelope is not and must not be used.
-VRC7C,FME7,FDS
-```
+|Instrument Type|Behavior|
+|---------|---------|
+|PULSE,MMC|Selects the duty cycle (0..3) (12.5%, 25%, 50%, 75%)|
+|NOISE,DPCM|elects period index (0..15)noise 0=highest, dpcm 0=lowest (see tables below for notes) Also: add 16 to noise duty for SHORT noise (16..31)|
+|VRC6PULSE|Selects the duty cycle (0..7) ((1+x)*6.25%)|
+|N106|Selects the wavetable index (0..63). The wavetable can be overwritten but here are the indexes for the default table: 0..7: square wave ((1+d) * 6.25% duty) 24: triangle wave 32..39: sawtooth wave (with varying softness)|
+|VRC7|Selects the instrument index. Typically you just use one value, but the instrument index can be enveloped too...|
+|TRI,VRC6SAW,VRC7C,FME7,FDS|The duty envelope is not and must not be used.|
 
 ## Instrument Modulation
-
 
 All instruments (except for [pitchless] NOISE and DPCM) can have modulation
 (auto-vibrato) applied to them. Four commands setup the modulation parameters.
 
-```
+```mml
 mdel [1..256]
 ```
 
 Sets the modulation delay. This is the number of ticks that are passed before
 the modulation starts its process.
 
-```
+```mml
 msw [1..256]
 ```
 
@@ -323,7 +311,7 @@ reaching its specified depth level. The time for the modulation depth to slide
 from 0 to the desired level will be "s/60*d seconds", where 'd' is the desired
 depth level and 's' is the sweep value.
 
-```
+```mml
 mdep [0..15]
 ```
 
@@ -331,7 +319,7 @@ Sets the desired modulation depth level. The depth slides from 0 to this level
 during the 'sweep' phase, and then it continues at this constant. The depth
 value ranges from 0..15 representing "+- 0 to 0.94 semitones".
 
-```
+```mml
 mrate [0..64]
 ```
 
@@ -339,35 +327,35 @@ Sets the speed/frequency of the modulation cycle. (how fast it 'vibrates')
 
 ## Complete Command List
 
-```
+```mml
 map <channel map>
 ```
 
 Sets the hardware channel mapping. (see beginning MML example for explanation)
 
-```
+```mml
 n106 <n106 index> <sample index>
 ```
 
-Overwrites n106 wavetable starting at <index> samples with the contents of the
-sample pointed to by <sample index>. The n106 wavetable is 128 samples wide and
+Overwrites n106 wavetable starting at `<index>` samples with the contents of the
+sample pointed to by `<sample index>`. The n106 wavetable is 128 samples wide and
 the waveform length of the n106 channels is 16 samples. ('duty' 0-127 selects
 the start sample, and then it can be changed during the envelope)
 
-```
+```mml
 instr <name>
 ```
 
 Starts creation of a new instrument with the specified name.
 
-```
+```mml
 type <instrument type>
 ```
 
 Sets the type of the current instrument being created. This command must be
 issued before other instrument commands.
 
-```
+```mml
 vol <envelope>
 pitch <envelope>
 duty <envelope>
@@ -376,7 +364,7 @@ duty <envelope>
 Adds and envelope to an instrument. See the "Instrument Envelopes" chapter.
 Some instruments require a duty envelope.
 
-```
+```mml
 mdel <modulation delay>
 msw <modulation sweep>
 mdep <modulation depth>
@@ -386,7 +374,7 @@ mrate <modulation rate>
 Sets the instrument modulation parameters. See the "Instrument Modulation"
 chapter.
 
-```
+```mml
 sample <sample index>
 ```
 
@@ -394,14 +382,14 @@ Sets the sample index (1=first sample in module) for DPCM and FDS instruments.
 FDS samples should be 64 samples long (and they are converted to 6-bit). DPCM
 samples can be much longer and they are converted to 1-bit DPCM.
 
-```
+```mml
 fm <1> <2> <3> <4> <5> <6> <7> <8>
 ```
 
 Sets the parameters for a VRC7 custom instrument. Each parameter is one byte
 and may be specified in either decimal or hex. (append 'h' to number for hex)
 
-```
+```mml
 defvol <default volume>
 ```
 
@@ -409,14 +397,14 @@ Sets the default volume level for an instrument. This must be used to change
 the default volume level for the generated samples. The default volume
 specified in the generated samples is not used during conversion.
 
-```
+```mml
 detune <semitones>
 ```
 
 Detunes the current instrument by an amount of semitones (can also use decimal
 places (like 0.05)).
 
-```
+```mml
 shortnoise
 ```
 
