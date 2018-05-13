@@ -418,4 +418,4 @@ IT2NSF is brought to you by:
 * mukunda (6502 driver, conversion program)
 * coda (VRC7 help, sharing his genius)
 * madbrain (additional (VRC7) help)
-* reduz (s3m2nsf dude)
+* reduz ([s3m2nsf](https://github.com/mukunda-/s3m2nsf) dude)
