@@ -3,7 +3,7 @@
 
 namespace Packify {
 
-void run( const char *input, const char *output );
+    void run(const char *input, const char *output);
 
 }
 

@@ -41,222 +41,245 @@ namespace ToadLoader {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-class Pattern {
+    class Pattern {
 //-----------------------------------------------------------------------------
-public:
-	Pattern();
-	~Pattern();
+    public:
+        Pattern();
 
-	void load( IO::File & );
-	void save( IO::File & );
-	void deleteData();
+        ~Pattern();
 
-	u16 dataLength;
-	u16 rows;
-	u8 *data;
-};
+        void load(IO::File &);
 
-//-----------------------------------------------------------------------------
-class SampleData {
-//-----------------------------------------------------------------------------
-public:
+        void save(IO::File &);
 
-	SampleData();
-	~SampleData();
+        void deleteData();
 
-	void load( IO::File &, int convert );
-	void save( IO::File & );
-	bool compressed; //(for loading)
-
-	bool bits16;
-	bool stereo;
-	
-	int length;
-	int loopStart;
-	int loopEnd;
-	int sustainStart;
-	int sustainEnd;
-	bool loop;
-	bool sustain;
-	bool bidiLoop;
-	bool bidiSustain;
-
-	union {
-		s8* data8;
-		s16* data16;
-	};
-};
+        u16 dataLength;
+        u16 rows;
+        u8 *data;
+    };
 
 //-----------------------------------------------------------------------------
-class Sample {
+    class SampleData {
 //-----------------------------------------------------------------------------
-	
-public:
-	Sample();
+    public:
 
-	void load( IO::File & );
-	void save( IO::File & );
-	bool testNameMarker( const char *str );
-	void setName( const char * );
-	u8 buildFlags();
+        SampleData();
 
-	char name[27];
-	char DOSFilename[13];
-	
-	int centerFreq;
-	u8 globalVolume;
-	u8 defaultVolume;
-	u8 defaultPanning;
+        ~SampleData();
 
-	u8 vibratoSpeed;
-	u8 vibratoDepth;
-	u8 vibratoForm;
-	u8 vibratoRate;
+        void load(IO::File &, int convert);
 
-	SampleData data;
-};
+        void save(IO::File &);
 
-//-----------------------------------------------------------------------------
-typedef struct {
-//-----------------------------------------------------------------------------
-	u8	note;
-	u8	sample;
-} notemapEntry;
+        bool compressed; //(for loading)
+
+        bool bits16;
+        bool stereo;
+
+        int length;
+        int loopStart;
+        int loopEnd;
+        int sustainStart;
+        int sustainEnd;
+        bool loop;
+        bool sustain;
+        bool bidiLoop;
+        bool bidiSustain;
+
+        union {
+            s8 *data8;
+            s16 *data16;
+        };
+    };
 
 //-----------------------------------------------------------------------------
-typedef struct {
-//-----------------------------------------------------------------------------
-	u8 y;
-	u16 x;
-} envelopeEntry;
-
-//-----------------------------------------------------------------------------
-class Envelope {
+    class Sample {
 //-----------------------------------------------------------------------------
 
-public:
-	Envelope();
+    public:
+        Sample();
 
-	void load( IO::File & );
-	void save( IO::File & );
+        void load(IO::File &);
 
-	bool enabled;
-	bool loop;
-	bool sustain;
-	bool isFilter;
-	u8 buildFlags();
-	
-	int length;
-	
-	int loopStart;
-	int loopEnd;
-	int sustainStart;
-	int sustainEnd;
-	
-	envelopeEntry nodes[25];
-};
+        void save(IO::File &);
 
-//-----------------------------------------------------------------------------
-class Instrument {
-//-----------------------------------------------------------------------------
-public:
-	Instrument();
+        bool testNameMarker(const char *str);
 
-	void load( IO::File & );
-	void save( IO::File & );
-	void setName( const char * );
+        void setName(const char *);
 
-	char name[27];
-	char DOSFilename[13];
+        u8 buildFlags();
 
-	u8	newNoteAction;
-	u8	duplicateCheckType;
-	u8	duplicateCheckAction;
+        char name[27];
+        char DOSFilename[13];
 
-	u16	fadeout;
-	u8	PPS;
-	u8	PPC;
-	u8	globalVolume;
-	u8	defaultPan;
-	u8	randomVolume;
-	u8	randomPanning;
-	u16	trackerVersion;
-	u8	initialFilterCutoff;
-	u8	initialFilterResonance;
+        int centerFreq;
+        u8 globalVolume;
+        u8 defaultVolume;
+        u8 defaultPanning;
 
-	u8	midiChannel;
-	u8	midiProgram;
-	u16 midiBank;
+        u8 vibratoSpeed;
+        u8 vibratoDepth;
+        u8 vibratoForm;
+        u8 vibratoRate;
 
-	notemapEntry notemap[ 120 ];
-
-	Envelope volumeEnvelope;
-	Envelope panningEnvelope;
-	Envelope pitchEnvelope;
-};
+        SampleData data;
+    };
 
 //-----------------------------------------------------------------------------
-class Module {
+    typedef struct {
 //-----------------------------------------------------------------------------
-public:
-	Module();
-	~Module();
+        u8 note;
+        u8 sample;
+    } notemapEntry;
 
-	void load( const char *filename );
-	void save( const char *filename );
-	void purgeInstruments();
-	void purgeMarkedSamples( const char *marker );
-	void trimSampleVector();
-	void setTitle( const char * );
+//-----------------------------------------------------------------------------
+    typedef struct {
+//-----------------------------------------------------------------------------
+        u8 y;
+        u16 x;
+    } envelopeEntry;
 
-	std::string filename;
-	
-	char title[27];
-	
-	u16 patternHighlight;
-	u16 length;
-	u16 cwtv;
-	u16 cmwt;
-	
-	bool flgStereo;
-	bool instrumentMode;
-	bool vol0MixOptimizations;
-	bool linearSlides;
-	bool oldEffects;
-	bool gxxCompat;
-	u8 buildFlags();
+//-----------------------------------------------------------------------------
+    class Envelope {
+//-----------------------------------------------------------------------------
+
+    public:
+        Envelope();
+
+        void load(IO::File &);
+
+        void save(IO::File &);
+
+        bool enabled;
+        bool loop;
+        bool sustain;
+        bool isFilter;
+
+        u8 buildFlags();
+
+        int length;
+
+        int loopStart;
+        int loopEnd;
+        int sustainStart;
+        int sustainEnd;
+
+        envelopeEntry nodes[25];
+    };
+
+//-----------------------------------------------------------------------------
+    class Instrument {
+//-----------------------------------------------------------------------------
+    public:
+        Instrument();
+
+        void load(IO::File &);
+
+        void save(IO::File &);
+
+        void setName(const char *);
+
+        char name[27];
+        char DOSFilename[13];
+
+        u8 newNoteAction;
+        u8 duplicateCheckType;
+        u8 duplicateCheckAction;
+
+        u16 fadeout;
+        u8 PPS;
+        u8 PPC;
+        u8 globalVolume;
+        u8 defaultPan;
+        u8 randomVolume;
+        u8 randomPanning;
+        u16 trackerVersion;
+        u8 initialFilterCutoff;
+        u8 initialFilterResonance;
+
+        u8 midiChannel;
+        u8 midiProgram;
+        u16 midiBank;
+
+        notemapEntry notemap[120];
+
+        Envelope volumeEnvelope;
+        Envelope panningEnvelope;
+        Envelope pitchEnvelope;
+    };
+
+//-----------------------------------------------------------------------------
+    class Module {
+//-----------------------------------------------------------------------------
+    public:
+        Module();
+
+        ~Module();
+
+        void load(const char *filename);
+
+        void save(const char *filename);
+
+        void purgeInstruments();
+
+        void purgeMarkedSamples(const char *marker);
+
+        void trimSampleVector();
+
+        void setTitle(const char *);
+
+        std::string filename;
+
+        char title[27];
+
+        u16 patternHighlight;
+        u16 length;
+        u16 cwtv;
+        u16 cmwt;
+
+        bool flgStereo;
+        bool instrumentMode;
+        bool vol0MixOptimizations;
+        bool linearSlides;
+        bool oldEffects;
+        bool gxxCompat;
+
+        u8 buildFlags();
 
 //	int special;(use message for bit0)
-	u8 globalVolume;
-	u8 mixingVolume;
-	u8 initialSpeed;
-	u8 initialTempo;
-	u8 sep;
-	u8 PWD;
-	
-	int messageLength;
-	char *message;
+        u8 globalVolume;
+        u8 mixingVolume;
+        u8 initialSpeed;
+        u8 initialTempo;
+        u8 sep;
+        u8 PWD;
 
-	int channelPan[64];
-	int channelVolume[64];
+        int messageLength;
+        char *message;
 
-	int orders[256];
+        int channelPan[64];
+        int channelVolume[64];
 
-	std::vector<Instrument*> instruments;
-	std::vector<Sample*> samples;
-	std::vector<Pattern*> patterns;
-};
+        int orders[256];
+
+        std::vector<Instrument *> instruments;
+        std::vector<Sample *> samples;
+        std::vector<Pattern *> patterns;
+    };
 
 //-----------------------------------------------------------------------------
-class Bank {
+    class Bank {
 //-----------------------------------------------------------------------------	
-public:
-	Bank( const std::vector<const char *> &files );
-	~Bank();
-	void addModule( const char *filename );
+    public:
+        Bank(const std::vector<const char *> &files);
 
-	std::vector<Module*> modules;
-};
+        ~Bank();
+
+        void addModule(const char *filename);
+
+        std::vector<Module *> modules;
+    };
 
 //-----------------------------------------------------------------------------
 }

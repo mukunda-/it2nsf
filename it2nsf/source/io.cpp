@@ -34,169 +34,169 @@
 
 namespace IO {
 
-	File::File() {
-		
-	}
+    File::File() {
 
-	File::File( const char *filename, FileAccessMode m ) {
-		fIsOpen = false;
-		open( filename, m );
-	}
+    }
 
-	File::~File() {
-		close();
-	}
+    File::File(const char *filename, FileAccessMode m) {
+        fIsOpen = false;
+        open(filename, m);
+    }
 
-	bool File::open( const char *filename, FileAccessMode m ) {
-		if( fIsOpen ) {
-			return false;
-		}
-		origin = 0;
-		mode = m;
-		file = fopen( filename, m ? "wb" : "rb" );
+    File::~File() {
+        close();
+    }
 
-		fIsOpen = file ? true : false;
-		return fIsOpen;
-	}
+    bool File::open(const char *filename, FileAccessMode m) {
+        if (fIsOpen) {
+            return false;
+        }
+        origin = 0;
+        mode = m;
+        file = fopen(filename, m ? "wb" : "rb");
 
-	void File::close() {
-		if( fIsOpen ) {
-			fclose( file );
-			file = 0;
-			fIsOpen = false;
-		}
-	}
+        fIsOpen = file ? true : false;
+        return fIsOpen;
+    }
 
-	u8 File::read8() {
-		if( mode == MODE_WRITE || (!fIsOpen) ) return 0;
-		u8 a[1];
-		fread( &a, 1, 1, file );
-		return a[0];
-	}
+    void File::close() {
+        if (fIsOpen) {
+            fclose(file);
+            file = 0;
+            fIsOpen = false;
+        }
+    }
 
-	u16 File::read16() {
-		u16 a = read8();
-		a |= read8() << 8;
-		return a;
-	}
+    u8 File::read8() {
+        if (mode == MODE_WRITE || (!fIsOpen)) return 0;
+        u8 a[1];
+        fread(&a, 1, 1, file);
+        return a[0];
+    }
 
-	u32 File::read32() {
-		u32 a = read16();
-		a |= read16() << 16;
-		return a;
-	}
+    u16 File::read16() {
+        u16 a = read8();
+        a |= read8() << 8;
+        return a;
+    }
 
-	void File::skip( int amount ) {
-		if( fIsOpen ) {
-			if( mode == MODE_WRITE ) {
-				for( u32 i = amount; i; i-- ) {
-					write8( 0 );
-				}
-			} else {
-				fseek( file, amount, SEEK_CUR );
-			}
-		}
-	}
+    u32 File::read32() {
+        u32 a = read16();
+        a |= read16() << 16;
+        return a;
+    }
 
-	void File::write8( u8 data ) {
-		if( fIsOpen && mode == MODE_WRITE ) {
-			fwrite( &data, 1, 1, file );
-		}
-	}
+    void File::skip(int amount) {
+        if (fIsOpen) {
+            if (mode == MODE_WRITE) {
+                for (u32 i = amount; i; i--) {
+                    write8(0);
+                }
+            } else {
+                fseek(file, amount, SEEK_CUR);
+            }
+        }
+    }
 
-	void File::write16( u16 data ) {
-		write8( data & 0xFF );
-		write8( data >> 8 );
-	}
+    void File::write8(u8 data) {
+        if (fIsOpen && mode == MODE_WRITE) {
+            fwrite(&data, 1, 1, file);
+        }
+    }
 
-	void File::write32( u32 data ) {
-		write16( data & 0xFFFF );
-		write16( data >> 16 );
-	}
+    void File::write16(u16 data) {
+        write8(data & 0xFF);
+        write8(data >> 8);
+    }
 
-	void File::writeAscii( const char * str ) {
-		for( int i = 0; str[i]; i++ ) {
-			write8( str[i] );
-		}
-	}
+    void File::write32(u32 data) {
+        write16(data & 0xFFFF);
+        write16(data >> 16);
+    }
 
-	void File::writeAsciiF( const char * str, int length ) {
-		int i;
-		for( i = 0; str[i] && i < length; i++ ) {
-			write8( str[i] );
-		}
-		for( ; i < length; i++ ) {
-			write8( 0 );
-		}
-	}
+    void File::writeAscii(const char *str) {
+        for (int i = 0; str[i]; i++) {
+            write8(str[i]);
+        }
+    }
 
-	void File::writeBytes( const u8 *bytes, int length ) {
-		if( fIsOpen && mode == MODE_WRITE ) {
-			fwrite( bytes, 1, length, file );
-		}
-	}
-	
-	void File::zeroFill( int amount ) {
-		for( int i = 0; i  < amount; i++ ) {
-			write8( 0 );
-		}
-	}
+    void File::writeAsciiF(const char *str, int length) {
+        int i;
+        for (i = 0; str[i] && i < length; i++) {
+            write8(str[i]);
+        }
+        for (; i < length; i++) {
+            write8(0);
+        }
+    }
 
-	void File::writeAlign( u32 boundary ) {
-		int skipa = tell() % boundary;
-		if( skipa ) {
-			skip( boundary - skipa );
-		}
-	}
+    void File::writeBytes(const u8 *bytes, int length) {
+        if (fIsOpen && mode == MODE_WRITE) {
+            fwrite(bytes, 1, length, file);
+        }
+    }
 
-	void File::seek( u32 amount ) {
-		if( fIsOpen )
-			fseek( file, origin + amount, SEEK_SET );
-	}
+    void File::zeroFill(int amount) {
+        for (int i = 0; i < amount; i++) {
+            write8(0);
+        }
+    }
 
-	u32 File::tell() {
-		if( fIsOpen )
-			return ftell( file ) - origin;
-		else
-			return 0;
-	}
+    void File::writeAlign(u32 boundary) {
+        int skipa = tell() % boundary;
+        if (skipa) {
+            skip(boundary - skipa);
+        }
+    }
 
-	void File::resetOrigin() {
-		if( fIsOpen )
-			origin = ftell( file );
-	}
+    void File::seek(u32 amount) {
+        if (fIsOpen)
+            fseek(file, origin + amount, SEEK_SET);
+    }
 
-	bool File::isOpen() {
-		return fIsOpen;
-	}
-	
-	bool fileExists( const char *filename ) {
-		FILE *f = fopen( filename, "rb" );
-		bool result = f ? true : false;
-		fclose(f);
-		return result;
-	}
+    u32 File::tell() {
+        if (fIsOpen)
+            return ftell(file) - origin;
+        else
+            return 0;
+    }
 
-	u32 fileSize( const char *filename ) {
-		FILE *f = fopen( filename, "rb" );
-		if( !f ) {
-			return 0;
-		}
-		fseek( f, 0, SEEK_END );
-		int size = ftell(f);
-		fclose(f);
-		return size;
-	}
+    void File::resetOrigin() {
+        if (fIsOpen)
+            origin = ftell(file);
+    }
 
-	int File::bankIndex() {
-		return tell() >> 12;
-	}
-	
-	int File::bankRemaining() {
-		return 4096 - (tell() & 4095);
-	}
-	
-	int File::bankOffset() {
-		return tell() & 4095;
-	}
+    bool File::isOpen() {
+        return fIsOpen;
+    }
+
+    bool fileExists(const char *filename) {
+        FILE *f = fopen(filename, "rb");
+        bool result = f ? true : false;
+        fclose(f);
+        return result;
+    }
+
+    u32 fileSize(const char *filename) {
+        FILE *f = fopen(filename, "rb");
+        if (!f) {
+            return 0;
+        }
+        fseek(f, 0, SEEK_END);
+        int size = ftell(f);
+        fclose(f);
+        return size;
+    }
+
+    int File::bankIndex() {
+        return tell() >> 12;
+    }
+
+    int File::bankRemaining() {
+        return 4096 - (tell() & 4095);
+    }
+
+    int File::bankOffset() {
+        return tell() & 4095;
+    }
 }

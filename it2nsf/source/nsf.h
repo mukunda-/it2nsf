@@ -38,214 +38,228 @@
 
 namespace NSF {
 
-class Bank;
-class Module;
+    class Bank;
+
+    class Module;
 
 //--------------------------------------------------------------
-typedef struct {
+    typedef struct {
 //--------------------------------------------------------------
-	u16 address;
-	u8 bank;
-} dataPointer;
+        u16 address;
+        u8 bank;
+    } dataPointer;
 
 //--------------------------------------------------------------
-class DPCMSample {
+    class DPCMSample {
 //--------------------------------------------------------------
-private:
-	
-	
-public:
-	DPCMSample();
-	DPCMSample( const ToadLoader::SampleData & );
+    private:
 
-	void createFromSample( const ToadLoader::SampleData & );
-	void reset();
 
-	std::vector<u8> data;
-	int		dataLength;
-	bool	loop;
-	dataPointer pointer;
+    public:
+        DPCMSample();
 
-	u8 dpcmLen; // for export
+        DPCMSample(const ToadLoader::SampleData &);
 
-	bool	operator ==( const DPCMSample& ) const;
-	void	exportData( IO::File & );
-	
-	int getDMClength() const {
-		return data.size() / 16;
-	}
+        void createFromSample(const ToadLoader::SampleData &);
 
-	int getDataLength() const {
-		return data.size();
-	}
+        void reset();
 
-	int getExportSize() const {
-		return data.size();
-	}
-};
+        std::vector <u8> data;
+        int dataLength;
+        bool loop;
+        dataPointer pointer;
 
-//---------------------------------------------
-class Envelope {
-//---------------------------------------------
+        u8 dpcmLen; // for export
 
-public:
-	std::vector<u8> nodes;
+        bool operator==(const DPCMSample &) const;
 
-	void exportData( IO::File &, int convert );
-};
+        void exportData(IO::File &);
+
+        int getDMClength() const {
+            return data.size() / 16;
+        }
+
+        int getDataLength() const {
+            return data.size();
+        }
+
+        int getExportSize() const {
+            return data.size();
+        }
+    };
 
 //---------------------------------------------
-class Instrument {
+    class Envelope {
 //---------------------------------------------
-private:
-	u8		type;
-	u8		defaultVolume;
-	u16		pitchBase;
-	u8		modDelay;
-	u8		modSweep;
-	u8		modDepth;
-	u8		modRate;
-	u8		envelopemask;
-	
-	u8		fdsSample[64]; // (fds only)
-	
-	int		dpcmIndex; // (dpcm only)
-	u8		vrc7custom[8]; // (vrc7 only)
 
-	bool	shortnoise; // (noise only)
-	
-	Envelope envVolume;
-	Envelope envPitch;
-	Envelope envDuty;
+    public:
+        std::vector <u8> nodes;
 
-	dataPointer pointer;
-
-	Module *parent;
-
-	bool convertEnvelope( Envelope &dest, const MML::Envelope &src );
-	
-public:
-	Instrument( Module *fparent, const ToadLoader::Module &, const MML::Instrument & );
-
-	int getExportSize();
-
-	const dataPointer *getPointer() {
-		return &pointer;
-	}
-	
-	void exportData( IO::File & );
-};
+        void exportData(IO::File &, int convert);
+    };
 
 //---------------------------------------------
-class Pattern {
+    class Instrument {
 //---------------------------------------------
-private:
-	u8		rows;
-	u8		numChannels;
-	std::vector<u8> data;
+    private:
+        u8 type;
+        u8 defaultVolume;
+        u16 pitchBase;
+        u8 modDelay;
+        u8 modSweep;
+        u8 modDepth;
+        u8 modRate;
+        u8 envelopemask;
 
-	dataPointer pointer;
+        u8 fdsSample[64]; // (fds only)
 
-public:
-	Pattern();
-	Pattern( ToadLoader::Pattern &, int chcount );
+        int dpcmIndex; // (dpcm only)
+        u8 vrc7custom[8]; // (vrc7 only)
 
-	const dataPointer *getPointer() {
-		return &pointer;
-	}
-	
-	void exportData( IO::File &file );
+        bool shortnoise; // (noise only)
 
-	u32 getCRC();
+        Envelope envVolume;
+        Envelope envPitch;
+        Envelope envDuty;
 
-	int getExportSize() {
-		return data.size() + 1;
-	}
-};
+        dataPointer pointer;
 
-//---------------------------------------------
-class Module {
-//---------------------------------------------
-	u8	initialVolume;
-	u8	initialTempo;
-	u8	initialSpeed;
-	
-	u8	sequence[256];
-	u8	length;
+        Module *parent;
 
-	u8	n106wavetable[128];
+        bool convertEnvelope(Envelope &dest, const MML::Envelope &src);
 
-	u8	expansionChips;
+    public:
+        Instrument(Module *fparent, const ToadLoader::Module &, const MML::Instrument &);
 
-	u8	numChannels;
-	u8	channelMap[16];
+        int getExportSize();
 
-	dataPointer pointer;
+        const dataPointer *getPointer() {
+            return &pointer;
+        }
 
-	void Module::parseSMOption( const char * );
-	void Module::parseSMOptions( const ToadLoader::Module & );
-
-	Bank *parent;
-	
-public:
-	Module( 
-		Bank *fParent,
-		const ToadLoader::Module & );
-
-	~Module();
-	
-	void exportData( IO::File &file );
-	void exportAddressTable( IO::File & ) const;
-
-	int expChipsUsed() {
-		return expansionChips;
-	}
-
-	int getExportSize();
-
-	std::vector<Pattern*> patterns;
-	std::vector<Instrument*> instruments;
-
-	Bank *getParent() {
-		return parent;
-	}
-	
-	const dataPointer *getPointer() {
-		return &pointer;
-	}
-};
+        void exportData(IO::File &);
+    };
 
 //---------------------------------------------
-class Bank {
+    class Pattern {
 //---------------------------------------------
-	std::vector<Module*> modules;
-	std::vector<DPCMSample*> dpcm_samples;
-	
-	const char *getAnimal() const;
-	
-public:
-	Bank();
-	Bank( const ToadLoader::Bank &, const ConversionInput::OperationData & );
-	~Bank();
+    private:
+        u8 rows;
+        u8 numChannels;
+        std::vector <u8> data;
 
-	void addModule( const ToadLoader::Module & );
-	void exportNSF( const char * ) const;
+        dataPointer pointer;
 
-	int getDPCMbank( int );
-	int getDPCMoffset( int );
-	int getDPCMlength( int );
-	int getDPCMloop( int );
+    public:
+        Pattern();
 
-	
-	int Bank::addDPCM( const ToadLoader::Sample &samp );
+        Pattern(ToadLoader::Pattern &, int chcount);
 
-	const char *strTitle;
-	const char *strArtist;
-	const char *strCopyright;
-};
+        const dataPointer *getPointer() {
+            return &pointer;
+        }
 
-void getFDSsound( u8 *fdsSample, ToadLoader::Sample &source );
-void getDefaultWavetable( u8 *dest );
+        void exportData(IO::File &file);
+
+        u32 getCRC();
+
+        int getExportSize() {
+            return data.size() + 1;
+        }
+    };
+
+//---------------------------------------------
+    class Module {
+//---------------------------------------------
+        u8 initialVolume;
+        u8 initialTempo;
+        u8 initialSpeed;
+
+        u8 sequence[256];
+        u8 length;
+
+        u8 n106wavetable[128];
+
+        u8 expansionChips;
+
+        u8 numChannels;
+        u8 channelMap[16];
+
+        dataPointer pointer;
+
+        void Module::parseSMOption(const char *);
+
+        void Module::parseSMOptions(const ToadLoader::Module &);
+
+        Bank *parent;
+
+    public:
+        Module(
+                Bank *fParent,
+                const ToadLoader::Module &);
+
+        ~Module();
+
+        void exportData(IO::File &file);
+
+        void exportAddressTable(IO::File &) const;
+
+        int expChipsUsed() {
+            return expansionChips;
+        }
+
+        int getExportSize();
+
+        std::vector<Pattern *> patterns;
+        std::vector<Instrument *> instruments;
+
+        Bank *getParent() {
+            return parent;
+        }
+
+        const dataPointer *getPointer() {
+            return &pointer;
+        }
+    };
+
+//---------------------------------------------
+    class Bank {
+//---------------------------------------------
+        std::vector<Module *> modules;
+        std::vector<DPCMSample *> dpcm_samples;
+
+        const char *getAnimal() const;
+
+    public:
+        Bank();
+
+        Bank(const ToadLoader::Bank &, const ConversionInput::OperationData &);
+
+        ~Bank();
+
+        void addModule(const ToadLoader::Module &);
+
+        void exportNSF(const char *) const;
+
+        int getDPCMbank(int);
+
+        int getDPCMoffset(int);
+
+        int getDPCMlength(int);
+
+        int getDPCMloop(int);
+
+
+        int Bank::addDPCM(const ToadLoader::Sample &samp);
+
+        const char *strTitle;
+        const char *strArtist;
+        const char *strCopyright;
+    };
+
+    void getFDSsound(u8 *fdsSample, ToadLoader::Sample &source);
+
+    void getDefaultWavetable(u8 *dest);
 
 }
 

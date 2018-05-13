@@ -29,14 +29,14 @@ extern "C" {
 typedef unsigned int e_uint;
 typedef signed int e_int;
 
-typedef unsigned char e_uint8 ;
-typedef signed char e_int8 ;
+typedef unsigned char e_uint8;
+typedef signed char e_int8;
 
-typedef unsigned short e_uint16 ;
-typedef signed short e_int16 ;
+typedef unsigned short e_uint16;
+typedef signed short e_int16;
 
-typedef unsigned int e_uint32 ;
-typedef signed int e_int32 ;
+typedef unsigned int e_uint32;
+typedef signed int e_int32;
 
 #ifdef __cplusplus
 }

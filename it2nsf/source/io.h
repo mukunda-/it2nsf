@@ -41,64 +41,77 @@ namespace IO {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-typedef enum {
+    typedef enum {
 //-----------------------------------------------------------------------------
-	MODE_READ,
-	MODE_WRITE
-} FileAccessMode;
+                MODE_READ,
+        MODE_WRITE
+    } FileAccessMode;
 
 //-----------------------------------------------------------------------------
-class File {
+    class File {
 //-----------------------------------------------------------------------------
-private:
-	FILE	*file;
-	bool	fIsOpen;
-	int		origin;
-	FileAccessMode mode;
+    private:
+        FILE *file;
+        bool fIsOpen;
+        int origin;
+        FileAccessMode mode;
 
-public:
-	File();
-	File( const char *, FileAccessMode );
-	~File();
-	bool open( const char *, FileAccessMode );
-	void close();
-	
-	u8 read8();
-	u16 read16();
-	u32 read32();
+    public:
+        File();
 
-	void write8( u8 );
-	void write16( u16 );
-	void write32( u32 );
+        File(const char *, FileAccessMode);
 
-	// write non-terminated ascii
-	void writeAscii( const char * );
+        ~File();
 
-	// write fixed length string (zero padded)
-	void writeAsciiF( const char *, int );
+        bool open(const char *, FileAccessMode);
 
-	void writeBytes( const u8 *bytes, int length );
+        void close();
 
-	void zeroFill( int );
+        u8 read8();
 
-	void writeAlign( u32 boundary );
+        u16 read16();
 
-	void resetOrigin();
-	
-	void skip( s32 amount );
-	u32 tell();
-	void seek( u32 offset );
+        u32 read32();
 
-	bool isOpen();
+        void write8(u8);
 
-	int bankIndex();
-	int bankRemaining();
-	int bankOffset();
-};
+        void write16(u16);
+
+        void write32(u32);
+
+        // write non-terminated ascii
+        void writeAscii(const char *);
+
+        // write fixed length string (zero padded)
+        void writeAsciiF(const char *, int);
+
+        void writeBytes(const u8 *bytes, int length);
+
+        void zeroFill(int);
+
+        void writeAlign(u32 boundary);
+
+        void resetOrigin();
+
+        void skip(s32 amount);
+
+        u32 tell();
+
+        void seek(u32 offset);
+
+        bool isOpen();
+
+        int bankIndex();
+
+        int bankRemaining();
+
+        int bankOffset();
+    };
 //-----------------------------------------------------------------------------
 
-bool fileExists();
-u32  fileSize( const char *filename );
+    bool fileExists();
+
+    u32 fileSize(const char *filename);
 
 //-----------------------------------------------------------------------------
 };
