@@ -35,6 +35,3 @@ update:
     if sweep = 0 then:
       flags |= modulation
       sweep = instrument.mod_sweep
-
-
-  

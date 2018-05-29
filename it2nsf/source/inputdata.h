@@ -42,26 +42,26 @@
 
 namespace ConversionInput {
 
-	class OperationData {
+    class OperationData {
 
-	public:
+    public:
 
-		OperationData( int argc, char *argv[] );
-		
-		std::string output;
-		std::vector<const char *> files;
-		bool quiet;
-		bool packmode;
-		bool reverse;
-		bool help;
+        OperationData(int argc, char *argv[]);
 
-		int nsfindex;
+        std::string output;
+        std::vector<const char *> files;
+        bool quiet;
+        bool packmode;
+        bool reverse;
+        bool help;
 
-		const char *strTitle;
-		const char *strArtist;
-		const char *strCopyright;
+        int nsfindex;
 
-	};
+        const char *strTitle;
+        const char *strArtist;
+        const char *strCopyright;
+
+    };
 }
 
 #endif

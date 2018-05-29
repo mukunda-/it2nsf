@@ -1,5 +1,6 @@
-effect memory map:
-------------------
+# Effect Memory Map
+
+```txt
 1: D K L W
 2: E F
 3: G
@@ -8,3 +9,4 @@ effect memory map:
 6: S
 7: H R U (caution)
 8: Q
+```

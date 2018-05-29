@@ -37,82 +37,87 @@
 
 namespace MML {
 
-class Envelope {
+    class Envelope {
 
-public:
-	std::vector<u8> nodes;
-	int susStart;
-	int susEnd;
-	int loop;
-	bool valid;
+    public:
+        std::vector <u8> nodes;
+        int susStart;
+        int susEnd;
+        int loop;
+        bool valid;
 
-	void setSingle( int value ) {
-		nodes.clear();
-		nodes.push_back( value );
-		susStart = -1;
-		susEnd = -1;
-		loop = 0;
-		valid = true;
-	}
+        void setSingle(int value) {
+            nodes.clear();
+            nodes.push_back(value);
+            susStart = -1;
+            susEnd = -1;
+            loop = 0;
+            valid = true;
+        }
 
-	void unsignData();
-	bool isSimple();
-	bool isLoopSimple();
-};
+        void unsignData();
 
-class Instrument {
+        bool isSimple();
 
-public:
+        bool isLoopSimple();
+    };
 
-	Instrument();
+    class Instrument {
 
-	std::string name;
+    public:
 
-	u8 type;
-	u8 mdelay;
-	u8 msweep;
-	u8 mdepth;
-	u8 mrate;
+        Instrument();
 
-	u8 fm[8];
+        std::string name;
 
-	u8 defaultVolume;
+        u8 type;
+        u8 mdelay;
+        u8 msweep;
+        u8 mdepth;
+        u8 mrate;
 
-	int swidth;
-	double cfreq;
-	double fdetune;
+        u8 fm[8];
 
-	int sample;
+        u8 defaultVolume;
 
-	bool shortnoise;
+        int swidth;
+        double cfreq;
+        double fdetune;
 
-	Envelope envVol;
-	Envelope envPitch;
-	Envelope envDuty;
+        int sample;
 
-	bool isSimple();
+        bool shortnoise;
 
-	void detune( int amount );
-	void setType( int typ );
-	void setSwidth( int width );
-	int getPitchBase() const;
-};
+        Envelope envVol;
+        Envelope envPitch;
+        Envelope envDuty;
 
-class Data {
-	
-public:
-	Data( const ToadLoader::Module &source );
+        bool isSimple();
 
-	u8 channelMap[16];
-	int channelCount;
-	u8 n106table[128];
-	u8 expansionChips;
+        void detune(int amount);
 
-	int defaultFadeout;
+        void setType(int typ);
 
-	std::vector<Instrument*> instruments;
+        void setSwidth(int width);
 
-};
+        int getPitchBase() const;
+    };
+
+    class Data {
+
+    public:
+        Data(const ToadLoader::Module &source);
+
+        u8 channelMap[16];
+        int channelCount;
+        u8 n106table[128];
+        u8 expansionChips;
+
+        int defaultFadeout;
+
+        std::vector<Instrument *> instruments;
+
+    };
 
 }
 
